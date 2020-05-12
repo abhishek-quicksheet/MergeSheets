@@ -1,0 +1,25 @@
+function myMerge() {
+ // ={FILTER(Aus!A2:AC,Aus!A2:A<>"");FILTER(Ind!A2:AC,Ind!A2:A<>"");FILTER(Jpn!A2:AC,Jpn!A2:A<>"")}
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetDelete = ss.getSheetByName('MasterMerge');
+  Logger.log(sheetDelete)
+  if (sheetDelete != null)
+  {
+    ss.deleteSheet(sheetDelete);
+  }
+  
+  const mergeSheets = ss.getSheets().map(s => `FILTER('${s.getSheetName()}'!A1:AC,'${s.getSheetName()}'!A2:A<>"")`);
+  var formulaText = '{' + mergeSheets.join(";") + '}';
+  var newMasterSheet = ss.insertSheet('MasterMerge');
+  newMasterSheet.getRange(1,1).setFormula(formulaText);
+  
+}
+
+function onOpen(e)
+{
+  SpreadsheetApp.getUi()
+  .createMenu('Merge Sheets')
+  .addItem('MergeAllSheets', 'myMerge')
+  .addToUi()
+}
